@@ -2,9 +2,7 @@
   <el-row class="header">
     <el-col :span="24" class="Header-Title">
       管理系统
-    </el-col>
-    <el-col :span="6" class="header-option">
-      <div class="bowOut">
+      <div class="bowOut" style="height: auto">
         <a @click.prevent="handleLogout">退出</a>
       </div>
       <div class="header-pwd">

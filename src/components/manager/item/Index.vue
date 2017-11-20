@@ -16,7 +16,7 @@
     </el-form>
     <div class="manage-header">
       <router-link to="/manager/insert">
-        <el-button type="primary">新 增</el-button>
+        <el-button type="primary">新 增 商 品</el-button>
       </router-link>
     </div>
     <el-table>
