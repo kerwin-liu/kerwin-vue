@@ -24,7 +24,7 @@
           <el-input v-model="item.warnQuantity" placeholder="库存警告数量"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" :loading="loading" @click="handleSave('item')">保 存</el-button>
+          <el-button type="primary" :loading="loading" @click="handleUpdate('item')">修 改</el-button>
           <el-button @click="handleCancel('item')">取 消</el-button>
         </el-form-item>
       </el-form>
@@ -50,6 +50,7 @@
       return {
         loading: false,
         item: {
+          itemId: '',
           itemNo: '',
           itemName: '',
           unitName: '',
@@ -74,11 +75,11 @@
       }
     },
     methods: {
-      handleSave(item) {
+      handleUpdate(item) {
         this.$refs[item].validate((valid) => {
           if (valid) {
             this.loading = true;
-            ajaxUtil.post('/item/save', util.stringify(this.item)).then((data) => {
+            ajaxUtil.post('/item/update', util.stringify(this.item)).then((data) => {
               this.loading = false
               this.$message({
                 message: data.msg,
@@ -100,8 +101,20 @@
       handleCancel(item)
       {
         this.$router.push('/manager/item')
+      },
+      getOne(){
+        ajaxUtil.get('/item/getOne/' + this.$route.params.id).then((object)=>{
+            this.item=object.data
+          console.log(this.item)
+        }).catch(()=>{
+        })
+        console.log(this.itemId)
       }
+    },
+    created(){
+      this.getOne()
     }
+
   }
 </script>
 

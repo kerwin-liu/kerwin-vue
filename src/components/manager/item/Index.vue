@@ -19,16 +19,29 @@
         <el-button type="primary">新 增 商 品</el-button>
       </router-link>
     </div>
-    <el-table v-loading="loading" :data="items.result" empty-text="暂无数据">
-      <el-table-column type="index" label="序号" width="70" align="center"/>
-      <el-table-column prop="itemNo" label="商品编号" align="center"/>
-      <el-table-column prop="itemName" label="商品名称" align="center"/>
-      <el-table-column prop="unitName" label="单位名称" align="center"/>
-      <el-table-column prop="rates" label="税率%" align="center"/>
-      <el-table-column prop="models" label="规格型号" align="center"/>
-      <el-table-column prop="price" label="单价" align="center"/>
-      <el-table-column prop="warnQuantity" label="库存警告数量" align="center"/>
-      <el-table-column prop="quantity" label="现有库存" align="center"/>
+    <el-table v-loading="loading" :data="items.result" empty-text="暂无数据" class="el-table-1" height="auto" :default-sort = "{ order: 'descending'}">
+      <el-table-column sortable type="index" label="序号" width="50" align="center"/>
+      <el-table-column sortable prop="itemNo" label="商品编号" align="center"/>
+      <el-table-column sortable prop="itemName" label="商品名称" align="center"/>
+      <el-table-column sortable prop="unitName" label="单位名称" align="center"/>
+      <el-table-column sortable prop="rates" label="税率%" align="center"/>
+      <el-table-column sortable prop="models" label="规格型号" align="center"/>
+      <el-table-column sortable prop="price" label="单价" align="center"/>
+      <el-table-column sortable prop="warnQuantity" label="库存警告数量" align="center"/>
+      <el-table-column sortable prop="quantity" label="现有库存" align="center"/>
+      <el-table-column label="操作" align="center" width="150">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleEdit(scope.$index, scope.row)">修改
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)">删除
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <div class="block paging">
@@ -54,18 +67,26 @@
       return {
         loading: false,
         itemQo: {
-          itemNo: '',
-          itemName: '',
-          models: '',
+          itemNo: null,
+          itemName: null,
+          models: null,
           pageIndex: 1,
           pageSize: 10
         },
-        items: []
+        items: [],
       }
     },
     methods: {
       onSubmit() {
-        ajaxUtil.get('/item/getPages',util.stringify(this.itemQo)).then(({data}) => {
+        ajaxUtil.get('/item/getPages', {
+          params: {
+            itemNo: this.itemQo.itemNo,
+            itemName: this.itemQo.itemName,
+            models: this.itemQo.models,
+            pageIndex: this.itemQo.pageIndex,
+            pageSize: this.itemQo.pageSize
+          }
+        }).then(({data}) => {
           this.items = data
           console.log(this.itemQo);
         }).catch(() => {
@@ -75,14 +96,45 @@
       handleSizeChange(val){
         this.itemQo.pageSize = val
         this.onSubmit()
-          console.log(this.itemQo.pageSize)
 
       },
       handleCurrentChange(val){
+
         this.itemQo.pageIndex = val
         this.onSubmit()
-          console.log(`当前页: ${val}`)
 
+      },
+      handleEdit(index, row) {
+        this.$router.push({ path: '/manager/modify/'+row.id})
+      },
+      handleDelete(index, row) {
+        this.$confirm('此操作将永久删除该商品, 是否继续?', '删除提示', {
+          cancelButtonText: '取消',
+          confirmButtonText: '确定',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          ajaxUtil.post('/item/delete/' + row.id).then((object) => {
+            console.log(object)
+            if (object.code == '200') {
+              this.$message({
+                type: 'success',
+                message: object.msg
+              });
+            }
+          }).catch((object) => {
+            this.$message({
+              type: 'error',
+              message: object.msg
+            });
+          })
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       }
     },
     created: function () {
@@ -95,4 +147,9 @@
   .manage-header {
     text-align: right;
   }
+
+  .el-table-1 {
+    height: 60vh;
+  }
+
 </style>
