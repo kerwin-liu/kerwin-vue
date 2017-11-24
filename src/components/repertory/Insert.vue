@@ -3,8 +3,8 @@
     <h3>商品入库</h3>
     <el-row>
       <el-col :span="6" :offset="18">
-        <el-button type="primary" @click="AddInventory" class="kerwin-main-content-title-button">增加一条商品</el-button>
-        <el-button type="primary" @click="DeleteInventory">删除行</el-button>
+        <el-button type="primary" @click="AddInventory">增加一条商品</el-button>
+        <el-button type="primary" @click="DeleteInventory" class="kerwin-main-content-title-button">删除行</el-button>
       </el-col>
     </el-row>
     <div class="main-repertory-div">
@@ -50,8 +50,8 @@
       </el-row>
       <el-row :span="24">
       </el-row>
-      <el-form :model="inventories" :rules="rules" ref="inventories">
-        <el-row :gutter="20" :span="24" v-for="(inventory,index) in inventories" :key="inventory.itemNo">
+      <el-form :model="modelForm" :rules="rules" ref="modelForm">
+        <el-row :gutter="20" :span="24" v-for="(inventory, index) in modelForm.inventories" :key="inventory.key">
           <el-col :span="1">
             <el-form-item label-width="0px">
               <el-checkbox v-model="repertoryOptions" :label="index" @change="handleCheckedCitiesChange" size="mini">
@@ -61,7 +61,7 @@
           </el-col>
           <el-col :span="2">
             <el-form-item label-width="0px">
-              <el-input size="small" v-model.trim="inventory.itemName" :readonly="true" class="login-form-input">
+              <el-input size="small" v-model.number.trim="inventory.itemName" :readonly="true" class="login-form-input">
                 <i class="el-icon-search el-input__icon" slot="suffix" @click="openSearchForm(index)"></i>
               </el-input>
             </el-form-item>
@@ -72,8 +72,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-form-item label-width="0px" style="text-align: center">
-              <el-input size="small" v-model.trim="inventory.quantity" class="login-form-input" @change="quantityChange(inventory)">1</el-input>
+            <el-form-item label-width="0px" style="text-align: center" :prop="'inventories.'+index+'.quantity'"
+                          :rules="rules.quantity">
+              <el-input size="small" v-model.trim="inventory.quantity" class="login-form-input"
+                        @input="quantityChange(inventory)">
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="1">
@@ -82,18 +85,23 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-form-item label-width="0px" style="text-align: center">
-              <el-input size="small" v-model.trim="inventory.quantity" class="login-form-input"/>
+            <el-form-item label-width="0px" style="text-align: center" :prop="'inventories.'+index+'.priceTax'"
+                          :rules="rules.money">
+              <el-input size="small" :readonly="inventory.readonly" v-model.number.trim="inventory.priceTax"
+                        class="login-form-input"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-form-item label-width="0px" style="text-align: center">
-              <el-input size="small" v-model.trim="inventory.quantity" class="login-form-input"/>
+            <el-form-item label-width="0px" style="text-align: center" :prop="'inventories.'+index+'.price'"
+                          :rules="rules.money">
+              <el-input size="small" :readonly="inventory.readonly" v-model.number.trim="inventory.price"
+                        class="login-form-input"/>
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-form-item label-width="0px" style="text-align: center">
-              <el-input size="small" v-model.trim="inventory.quantity" class="login-form-input"/>
+            <el-form-item label-width="0px" style="text-align: center" :prop="'inventories.'+index+'.totalPrice'"
+                          :rules="rules.money">
+              <el-input size="small" :readonly="true" v-model.number.trim="inventory.totalPrice" class="login-form-input"/>
             </el-form-item>
           </el-col>
           <el-col :span="1">
@@ -102,37 +110,40 @@
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-form-item label-width="0px" style="text-align: center">
-              <el-input size="small" v-model.trim="inventory.quantity" class="login-form-input"/>
+            <el-form-item label-width="0px" style="text-align: center" :prop="'inventories.'+index+'.taxAmount'"
+                          :rules="rules.money">
+              <el-input size="small" :readonly="true" v-model.number.trim="inventory.taxAmount" class="login-form-input"/>
             </el-form-item>
           </el-col>
           <el-col :span="2">
-            <el-form-item label-width="0px" style="text-align: center">
-              <el-input size="small" v-model.trim="inventory.quantity" class="login-form-input"/>
+            <el-form-item label-width="0px" style="text-align: center" :prop="'inventories.'+index+'.totalPriceTax'"
+                          :rules="rules.money">
+              <el-input size="small" :readonly="inventory.readonly" v-model.number.trim="inventory.totalPriceTax"
+                        class="login-form-input"/>
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item >
-            <el-date-picker
-              size="small"
-              v-model="inventory.producedTime"
-              align="right"
-              type="date"
-              placeholder="选择日期"
-              :picker-options="pickerOptions">
-            </el-date-picker>
+            <el-form-item>
+              <el-date-picker
+                size="small"
+                v-model="inventory.producedTime"
+                align="right"
+                type="date"
+                placeholder="选择日期"
+                :picker-options="pickerOptions">
+              </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </div>
     <el-row>
-      <span>总合计金额：</span>
+      <span>总合计金额：</span>{{squantity}}
     </el-row>
     <el-dialog title="选择商品信息" :visible.sync="invoiceItemDialogVisible" append-to-body width="70%">
       <el-form :inline="true" :model="itemQo">
         <el-form-item label="商品编号">
-          <el-input v-model="itemQo.itemNo" placeholder="商品编号" class="checkaaaaa"></el-input>
+          <el-input v-model="itemQo.itemNo" placeholder="商品编号"></el-input>
         </el-form-item>
         <el-form-item label="商品名称">
           <el-input placeholder="商品名称" v-model.trim="itemQo.itemName"></el-input>
@@ -178,6 +189,7 @@
 
 <script>
   import ajaxUtil from '@/config/ajaxUtil.js'
+  import validate from '@/assets/js/validate.js'
   import ElRow from "element-ui/packages/row/src/row";
   import ElCol from "element-ui/packages/col/src/col";
   const options = [0];
@@ -187,38 +199,49 @@
       ElRow
     },
     data(){
-      var validateWarnQuantity = (rule, value, callback) => {
-        let regular = /^[0-9]{1,9}([.]+[0-9]{0,4})?$/;
-        if (!regular.test(value)) {
-          return callback(new Error('请填写正确的库存警告数量'));
-        } else {
+      const validatorQuantity = (rule, value, callback) => {
+        if (validate.validateQuantity(value)) {
           callback();
+        } else {
+          return callback(new Error('请填写正确的入库数量'));
+        }
+      }
+      const validatorMoney = (rule, value, callback) => {
+        if (validate.validateMoney(value)) {
+          callback();
+        } else {
+          return callback(new Error('请填写正确的数据'));
         }
       }
       return {
+
         invoiceItemDialogVisible: false,
         inventoriesIndex: null,
         isIndeterminate: true,
         checkAll: false,
         repertoryOptions: [],
-        inventories: [{
-          itemId: null,
-          itemName: '请选择入库商品',
-          unitName: null,
-          price:null,
-          priceTax:null,
-          rates: null,
-          models: '',
-          quantity: null,
-          taxAmount: null,
-          totalPrice: null,
-          totalPriceTax: null,
-          producedTime: null,
-          invoiceStats: null,
-          invoiceCode: null,
-          invoiceNo: null,
-          remark: null
-        }],
+        modelForm: {
+          inventories: [{
+            key: Date.now(),
+            readonly: true,
+            itemId: null,
+            itemName: '请选择入库商品',
+            unitName: null,
+            price: 0,
+            priceTax: 0,
+            rates: null,
+            models: '',
+            quantity: null,
+            taxAmount: 0,
+            totalPrice: 0,
+            totalPriceTax: 0,
+            producedTime: null,
+            invoiceStats: null,
+            invoiceCode: null,
+            invoiceNo: null,
+            remark: null
+          }]
+        },
         loading: false,
         itemQo: {
           itemNo: null,
@@ -266,8 +289,11 @@
           }]
         },
         rules: {
-          quantity:[{required: true, message: '请输入库存数量'},
-            {validator: validateWarnQuantity, trigger: 'blur'}]
+          quantity: [
+            {required: true, message: '请输入数量', trigger: 'blur'},
+            {validator: validatorQuantity, trigger: 'blur'}
+          ],
+          money: [{validator: validatorMoney, trigger: 'blur'}]
         }
       }
 
@@ -303,28 +329,35 @@
         this.getItems()
       },
       chooseItem(row){
-        this.inventories[this.inventoriesIndex].itemName = row.itemName
-        this.inventories[this.inventoriesIndex].itemId = row.id
-        this.inventories[this.inventoriesIndex].unitName = row.unitName
-        this.inventories[this.inventoriesIndex].rates = row.rates
-        this.inventories[this.inventoriesIndex].models = row.models
+        this.modelForm.inventories[this.inventoriesIndex].itemName = row.itemName
+        this.modelForm.inventories[this.inventoriesIndex].itemId = row.id
+        this.modelForm.inventories[this.inventoriesIndex].unitName = row.unitName
+        this.modelForm.inventories[this.inventoriesIndex].rates = row.rates
+        this.modelForm.inventories[this.inventoriesIndex].models = row.models
+        if (!isNaN(parseInt(row.rates))) {
+          this.modelForm.inventories[this.inventoriesIndex].readonly = false
+        }
         this.invoiceItemDialogVisible = false
       },
       AddInventory(){
-        this.inventories.push({
+        this.modelForm.inventories.push({
+          key: Date.now(),
+          readonly: true,
           itemId: null,
           itemName: '请选择入库商品',
           quantity: null,
-          taxAmount: null,
-          totalPrice: null,
-          totalPriceTax: null,
+          price: 0,
+          priceTax: 0,
+          taxAmount: 0,
+          totalPrice: 0,
+          totalPriceTax: 0,
           producedTime: null,
           invoiceStats: null,
           invoiceCode: null,
           invoiceNo: null,
           remark: null
         })
-        options.push(this.inventories.length - 1)
+        options.push(this.modelForm.inventories.length - 1)
       },
       DeleteInventory(){
         this.repertoryOptions.sort(function sequence(a, b) {
@@ -332,7 +365,7 @@
         })
         for (var i = this.repertoryOptions.length; i > 0; i--) {
           console.log('删除' + this.repertoryOptions[i - 1])
-          this.inventories.splice(this.repertoryOptions[i - 1], 1)
+          this.modelForm.inventories.splice(this.repertoryOptions[i - 1], 1)
         }
         this.repertoryOptions = []
         this.isIndeterminate = false
@@ -347,7 +380,32 @@
         this.isIndeterminate = this.repertoryOptions.length > 0 && this.repertoryOptions.length < options.length;
       },
       quantityChange(inventory){
-
+        if (validate.validateQuantity(inventory.quantity)) {
+          inventory.totalPrice = inventory.quantity * inventory.price;
+          inventory.totalPrice = Number(Number.parseFloat(inventory.totalPrice).toFixed(2));
+          inventory.totalPriceTax = inventory.quantity * inventory.priceTax;
+          inventory.totalPriceTax = Number(Number.parseFloat(inventory.totalPriceTax).toFixed(2));
+          inventory.taxAmount = inventory.totalPriceTax - inventory.totalPrice;
+        }
+      },
+      priceTaxChange(inventory){
+        if (validate.validateMoney(inventory.priceTax)) {
+          inventory.totalPrice = inventory.quantity * inventory.price;
+          inventory.totalPrice = Number(Number.parseFloat(inventory.totalPrice).toFixed(2));
+          inventory.totalPriceTax = inventory.quantity * inventory.priceTax;
+          inventory.totalPriceTax = Number(Number.parseFloat(inventory.totalPriceTax).toFixed(2));
+          inventory.taxAmount = inventory.totalPriceTax - inventory.totalPrice;
+        }
+      }
+    },
+    computed: {
+      squantity() {
+         var s =this.modelForm.inventories.filter(e => {
+           return e.quantity
+         }).map(e=>{
+           return e.quantity
+         })
+          return s
       }
     }
   }

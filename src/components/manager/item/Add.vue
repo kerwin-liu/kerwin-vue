@@ -12,7 +12,9 @@
           <el-input v-model="item.unitName" placeholder="单位名称"></el-input>
         </el-form-item>
         <el-form-item label="税率" prop="rates">
-          <el-input v-model="item.rates" placeholder="税率"><template slot="append">%</template></el-input>
+          <el-input v-model="item.rates" placeholder="税率">
+            <template slot="append">%</template>
+          </el-input>
         </el-form-item>
         <el-form-item label="规格型号" prop="models">
           <el-input v-model="item.models" placeholder="规格型号"></el-input>

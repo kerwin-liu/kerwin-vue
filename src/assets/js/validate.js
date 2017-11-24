@@ -18,5 +18,21 @@ export default {
   validatePassword (val) {
     var reg = /^[\w\s~!@%#$^*+='?\-(){}[],.|《》、，。！{}·#￥……*（）——:：“”？【】；‘’`_;"]{6,20}$/
     return reg.test(val)
+  },
+  /**
+   * 数量
+   * @param val
+   * @returns {boolean}
+   */
+  validateQuantity (val) {
+    var reg = /^[0-9]{1,9}([.]+[0-9]{0,4})?$/
+    return reg.test(val)
+  },
+  /**
+   * 价格金钱
+   */
+  validateMoney (val){
+    var reg = /^[0-9]{1,20}([.]+[0-9]{0,2})?$/
+    return reg.test(val)
   }
 }
