@@ -1,26 +1,39 @@
 <template>
   <div>
-    <el-form :inline="true" :model="itemQo">
-      <el-form-item label="商品编号">
-        <el-input v-model="itemQo.itemNo" placeholder="商品编号"/>
-      </el-form-item>
-      <el-form-item label="商品名称">
-        <el-input v-model="itemQo.itemName" placeholder="商品编号"/>
-      </el-form-item>
-      <el-form-item label="规格型号">
-        <el-input v-model="itemQo.models" placeholder="规格型号"/>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
-      </el-form-item>
-    </el-form>
-    <div class="manage-header">
-      <router-link to="/manager/insert">
-        <el-button type="primary">新 增 商 品</el-button>
-      </router-link>
-    </div>
-    <el-table v-loading="loading" :data="items.result" empty-text="暂无数据" class="el-table-1" height="auto" :default-sort = "{ order: 'descending'}">
-      <el-table-column sortable type="index" label="序号" width="50" align="center"/>
+    <el-row>
+      <el-form :inline="true" :model="itemQo">
+        <el-col :span="7">
+          <el-form-item label="商品编号">
+            <el-input v-model="itemQo.itemNo" size="small" placeholder="商品编号"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="7">
+          <el-form-item label="商品名称">
+            <el-input v-model="itemQo.itemName" size="small" placeholder="商品编号"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="型号">
+            <el-input v-model="itemQo.models" size="small" placeholder="规格型号"/>
+          </el-form-item>
+        </el-col>
+        <el-col :span="2">
+          <el-form-item>
+            <el-button type="primary" size="small" @click="onSubmit">查询</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col :span="2">
+          <el-form-item>
+            <el-button size="small" type="primary" @click="addItem">新 增 商 品</el-button>
+          </el-form-item>
+        </el-col>
+      </el-form>
+
+    </el-row>
+
+    <el-table v-loading="loading" :data="items.result" empty-text="暂无数据" class="el-table-1" height="auto"
+              :default-sort="{ order: 'descending'}" :row-class-name="tableRowClassName" >
+      <el-table-column sortable type="index" :index="indexMethod" label="序号" width="50" align="center"/>
       <el-table-column sortable prop="itemNo" label="商品编号" align="center"/>
       <el-table-column sortable prop="itemName" label="商品名称" align="center"/>
       <el-table-column sortable prop="unitName" label="单位名称" align="center"/>
@@ -49,19 +62,24 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="items.currentPageNo"
-        :page-sizes="[10, 20, 30, 100]"
-        :page-size="10"
+        :page-sizes="[7, 20, 30, 100]"
+        :page-size="7"
         layout="total, sizes, prev, pager, next, jumper"
         :total="items.totalCount">
       </el-pagination>
     </div>
   </div>
 </template>
-
 <script>
   import ajaxUtil from '@/config/ajaxUtil.js'
   import util from '@/assets/js/util.js'
+  import ElRow from "element-ui/packages/row/src/row";
+  import ElCol from "element-ui/packages/col/src/col";
   export default {
+    components: {
+      ElCol,
+      ElRow
+    },
     data(){
 
       return {
@@ -71,12 +89,22 @@
           itemName: null,
           models: null,
           pageIndex: 1,
-          pageSize: 10
+          pageSize: 7
         },
         items: [],
       }
     },
     methods: {
+      indexMethod(index) {
+        return this.itemQo.pageIndex * this.itemQo.pageSize - this.itemQo.pageSize +index +1;
+      },
+      tableRowClassName({row}) {
+        if (row.quantity <= row.warnQuantity) {
+          return 'warning-row';
+        } else{
+          return 'success-row';
+        }
+      },
       onSubmit() {
         ajaxUtil.get('/item/getPages', {
           params: {
@@ -88,10 +116,11 @@
           }
         }).then(({data}) => {
           this.items = data
-          console.log(this.itemQo);
         }).catch(() => {
         });
-        console.log(this.items);
+      },
+      addItem(){
+        this.$router.push({path: '/manager/insert'})
       },
       handleSizeChange(val){
         this.itemQo.pageSize = val
@@ -99,13 +128,12 @@
 
       },
       handleCurrentChange(val){
-
         this.itemQo.pageIndex = val
         this.onSubmit()
 
       },
       handleEdit(index, row) {
-        this.$router.push({ path: '/manager/modify/'+row.id})
+        this.$router.push({path: '/manager/modify/' + row.id})
       },
       handleDelete(index, row) {
         this.$confirm('此操作将永久删除该商品, 是否继续?', '删除提示', {
@@ -151,5 +179,14 @@
   .el-table-1 {
     height: 60vh;
   }
+</style>
+<style>
 
+  .el-table .warning-row {
+    background: oldlace;
+  }
+
+  .el-table .success-row {
+    background: #f0f9eb;
+  }
 </style>

@@ -34,5 +34,19 @@ export default {
   validateMoney (val){
     var reg = /^[0-9]{1,20}([.]+[0-9]{0,2})?$/
     return reg.test(val)
+  },
+  /**
+   * 发票代码
+   */
+  validateInvoiceCode(val){
+    var reg = /^[0-9]{1,12}$/
+    return reg.test(val)
+  },
+  /**
+   * 发票号码
+   */
+  validateInvoiceNo(val){
+    var reg = /^[0-9]{1,8}$/
+    return reg.test(val)
   }
 }

@@ -5,7 +5,7 @@
         <el-input v-model="user.userName" placeholder="用户姓名"></el-input>
       </el-form-item>
       <el-form-item label="性别">
-        <el-select v-model="user.sex" placeholder="性别">
+        <el-select v-model="user.sex" clearable placeholder="性别">
           <el-option label="男" value="0"></el-option>
           <el-option label="女" value="1"></el-option>
         </el-select>

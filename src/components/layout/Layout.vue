@@ -34,7 +34,7 @@
 
 <style scoped>
   .layout {
-    background-image: url("../../assets/image/jianyue.jpg");
+    /*background-image: url("../../assets/image/tree.jpg");*/
     background-size: 100% 100%;
     opacity: 0.6;
   }

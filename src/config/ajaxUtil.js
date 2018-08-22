@@ -1,7 +1,7 @@
 import axios from 'axios'
 import router from '../router/index'
 
-axios.defaults.baseURL = '/kerwin'
+axios.defaults.baseURL = '/'
 axios.defaults.timeout = 10000
 
 axios.interceptors.request.use(config => {
@@ -16,11 +16,7 @@ axios.interceptors.response.use(({data}) => {
     return data
   } else {
     if (code === '302') {
-      alert('登录超时，请重新登录', '提示', {
-        confirmButtonText: '确定',
-        callback: () => {
-        }
-      })
+      router.push('/')
     }
     if (code === '500') {
       router.replace('/500')

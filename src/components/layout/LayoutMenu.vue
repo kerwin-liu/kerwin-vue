@@ -1,7 +1,13 @@
 <template>
   <div>
     <el-col>
-      <el-menu>
+      <el-menu
+        default-active="2"
+        class="el-menu-vertical-demo"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+        >
         <template v-for="item in items">
           <template v-if="item.mLevel=='1'">
             <el-submenu :index="item.id" v-if="!item.hidden">

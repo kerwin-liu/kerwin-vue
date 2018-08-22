@@ -29,8 +29,6 @@
         </el-form-item>
       </el-form>
     </el-col>
-
-
   </div>
 </template>
 
@@ -114,7 +112,6 @@
     created(){
       this.getOne()
     }
-
   }
 </script>
 
